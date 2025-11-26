@@ -1,0 +1,266 @@
+یکبار دیگه انتظاراتم از پروژه رو برات میگم 
+
+
+من یک پروژه وبسایت برای پرشک با جنگو دارم میسازم
+
+
+
+این پروژه با api کار میکند
+مستندات این پروژه رو اماده کردم
+
+ولی داخل کدم مشکلاتی دارم میخوام قدم به قدم بهم کمک کنی تا مشکلات کد ها رو برطرف کنم
+در وحله اول میخوام کامل روی پروژم مسلط شی و بدونی چی میخوام بسازم.
+
+مستندی که ساختم رو برات اپلود میکنم تا یک دید کلی نسبت به پروژه داشته باشی فعلا
+
+بعدش از اپ accounts شروع کنیم به درست کردن پروژه
+
+وقتی ساختار کلی رو فهمیدی بگو تا کد های اپ accounts رو برات بفرستم
+
+
+
+
+
+WebDoc Back-End Documents:
+
+Accounts
+هدف
+مدیریت کاربران، نقش‌ها، گروه‌های دسترسی، ورود و عضویت کاربران.
+وظایف
+•	نگهداری اطلاعات User اصلی جنگو (AUTH_USER_MODEL)
+•	مدیریت نقش‌ها:
+o	Admin
+o	Doctor
+o	Editor
+o	Patient
+•	مدیریت سطح دسترسی پنل ادمین طبق نقش‌ها
+•	APIهای احتمالی آینده برای ثبت‌نام و ورود (فعلاً از ادمین)
+مدل‌ها
+•	از مدل پیش‌فرض Django User استفاده می‌شود.
+•	فعلاً مدل اضافه ندارد.
+سطح دسترسی
+•	Admin → همه‌چیز
+•	Doctor → مدیریت پروفایل خودش + مدیریت SiteSettings
+•	Editor → فقط پست‌ها و کتگوری‌های خودش
+•	Patient → فعلاً فقط عضویت؛ در آینده داشبورد دارد، اما اجازه ورود به admin ندارد.
+________________________________________
+Core
+هدف
+نگهداری اطلاعات پایه‌ای سایت، پروفایل پزشک و تنظیمات عمومی.
+وظایف
+•	نگهداری تنظیمات سایت (SiteSettings)
+•	نگهداری اطلاعات پروفایل پزشک (DoctorProfile)
+•	ارائه API برای این داده‌ها
+مدل‌ها
+1. TimeStampedModel (Abstract Base Model)
+Purpose
+مدلی انتزاعی برای اضافه کردن فیلدهای زمان ایجاد و آخرین بروزرسانی به تمام مدل‌های مشتق‌شده.
+Fields
+Field	Type	Description
+created_at	DateTimeField	زمان ایجاد رکورد، فقط یک بار تعیین می‌شود.
+updated_at	DateTimeField	هنگام هر بروزرسانی رکورد، به‌صورت خودکار تغییر می‌کند.
+Notes
+•	این مدل abstract=True است و در دیتابیس جدول جداگانه ندارد.
+•	هدف: یکپارچگی زمانی تمام مدل‌های اصلی پروژه.
+________________________________________
+2. SiteSettings
+Purpose
+مدیریت تنظیمات عمومی سایت، شامل اطلاعات تماس کلینیک، بیمارستان، شبکه‌های اجتماعی و موقعیت مکانی.
+Fields
+Field	Type	Description
+clinic_name	CharField(255)	نام کلینیک یا مطب.
+clinic_address	CharField(255)	آدرس کلینیک.
+clinic_phone	CharField(50)	شماره تماس کلینیک.
+hospital_name	CharField(150)	نام بیمارستان محل فعالیت پزشک.
+hospital_address	CharField(255)	آدرس بیمارستان.
+hospital_phone	CharField(50)	شماره تماس بیمارستان.
+email	CharField(100)	ایمیل رسمی پزشک/کلینیک.
+instagram	CharField(150)	آدرس صفحه اینستاگرام.
+telegram	CharField(150)	لینک کانال تلگرام.
+whatsapp	CharField(150)	شماره/لینک واتس‌اپ.
+website	CharField(150)	وب‌سایت رسمی.
+location_lat	FloatField	موقعیت جغرافیایی (Latitude).
+location_lng	FloatField	موقعیت جغرافیایی (Longitude).
+footer_text	TextField	متن نمایش داده‌شده در فوتر سایت.
+updated_at	DateTimeField	بروزرسانی خودکار تنظیمات.
+Notes
+•	این مدل همیشه یک رکورد دارد (Single Instance Configuration).
+•	پیشنهاد: یک API با نام /api/site-settings/ برای دریافت کل اطلاعات.
+•	امکان کش کردن داده‌ها جهت بهبود سرعت مناسب است.
+________________________________________
+3. DoctorProfile
+Purpose
+مدل پروفایل پزشک، شامل اطلاعات حرفه‌ای، تصویر، تجربه، و ارتباط با کاربر.
+Relations
+Field	Relation	Description
+user	OneToOne → AUTH_USER_MODEL	اتصال پروفایل پزشک به حساب کاربری. Optional است.
+Fields
+Field	Type	Description
+full_name	CharField(150)	نام و نام خانوادگی پزشک.
+title	CharField(150)	عنوان حرفه‌ای (مثلاً متخصص جراحی عمومی).
+biography	TextField	بیوگرافی کامل پزشک.
+medical_registry_number	CharField(100)	شماره نظام پزشکی.
+experience_years	PositiveSmallIntegerField	تعداد سال‌های تجربه.
+profile_image	ImageField(upload_to="doctor/profile/")	عکس پروفایل پزشک.
+created_at	DateTimeField	زمان ایجاد.
+updated_at	DateTimeField	زمان آخرین بروزرسانی.
+Notes
+•	تصویر پزشک در مسیر doctor/profile/ آپلود می‌شود.
+•	این مدل پایه اکثر صفحات پرسونال (Landing، About، Resume) است.
+•	اگر پروژه چند پزشک داشته باشد، باید قابلیت چند رکوردی شود (در حال حاضر فقط یک پزشک را پشتیبانی می‌کند).
+سطح دسترسی
+•	Admin → همه‌چیز
+•	Doctor → فقط DoctorProfile خود + SiteSettings
+________________________________________
+Blog
+هدف
+مدیریت سیستم وبلاگ: دسته‌بندی و پست‌ها.
+وظایف
+•	ساخت، ویرایش و حذف دسته‌بندی‌ها
+•	ساخت، ویرایش و حذف پست‌ها
+•	نگهداری نویسنده هر پست (created_by)
+•	امکان فیلتر در ادمین بر اساس نویسنده
+•	مدیریت مجزای دسترسی‌ها برای Doctor و Editor
+مدل‌ها
+1. Category
+Purpose
+دسته‌بندی محتوای وبلاگ به منظور مرتب‌سازی پست‌ها، بهبود Navigation و SEO.
+Inheritance
+ارث‌بری از TimeStampedModel → دارای created_at و updated_at.
+Fields
+Field	Type	Description
+title	CharField(100)	عنوان دسته‌بندی.
+slug	SlugField(unique=True)	شناسه یکتا برای URL.
+description	TextField(blank=True)	توضیحات کامل دسته‌بندی.
+created_by	ForeignKey → User	کاربری که دسته را ایجاد کرده. حذف کاربر باعث SET_NULL می‌شود.
+Relations
+•	One-to-Many: یک Category می‌تواند شامل چندین Post باشد.
+→ related_name="posts"
+Notes
+•	استفاده از slug یکتا برای SEO ضروری است.
+•	حذف کاربر سازنده مانع از حذف Category نمی‌شود (به دلیل SET_NULL).
+•	مناسب برای ایجاد منوی دسته‌بندی در سایت.
+________________________________________
+2. Post
+Purpose
+مدل اصلی محتوای وبلاگ، شامل عنوان، متن کامل، تصویر شاخص، دسته‌بندی و مدیریت انتشار.
+Inheritance
+ارث‌بری از TimeStampedModel → ردگیری دقیق زمان ایجاد/ویرایش.
+Fields
+Field	Type	Description
+title	CharField(200)	عنوان پست وبلاگ.
+slug	SlugField(unique=True)	مسیر URL یکتا برای پست.
+summary	TextField	خلاصه‌ای برای معرفی پست (برای لیست بلاگ و Meta Description).
+content	TextField	محتوای کامل مقاله.
+thumbnail	ImageField(upload_to=blog_thumbnail_upload, blank=True)	تصویر شاخص پست.
+category	ForeignKey(Category, SET_NULL)	دسته‌بندی پست. حذف دسته مقدار را NULL می‌کند.
+is_published	BooleanField(default=True)	وضعیت انتشار (Draft/Published).
+published_at	DateTimeField(null=True, blank=True)	زمان انتشار واقعی.
+created_by	ForeignKey(User, SET_NULL)	نویسنده پست.
+Relations
+•	Many-to-One: هر Post وابسته به یک Category است.
+•	Many-to-One: هر Post توسط یک User ایجاد شده است.
+Notes
+•	اگر is_published=False و published_at=NULL پست پیش‌نویس محسوب می‌شود.
+•	زمان انتشار باید در API تنظیم شود تا مدیریت زمان‌بندی ممکن گردد.
+•	پیشنهاد: افزودن قابلیت Tags در آینده.
+•	تصویر شاخص اختیاری است و در لیست پست‌ها قابل کنترل است.
+سطح دسترسی
+•	Admin → کامل
+•	Doctor → می‌تواند کل دسته‌ها و پست‌ها را مدیریت کند
+•	Editor → فقط پست‌ها و دسته‌های خودش را مدیریت می‌کند
+________________________________________
+Menu
+هدف
+مدیریت منوی داینامیک سایت.
+وظایف
+•	تعریف منوی چندسطحی (Nested Menu)
+•	مدیریت لینک‌های داخلی/خارجی
+•	ترتیب نمایش
+•	استفاده در Frontend با API
+مدل‌ها (مرسوم برای منو داینامیک)
+Model: Menu
+Inheritance
+ارث‌بری از TimeStampedModel
+که شامل فیلدهای زیر است:
+•	created_at — زمان ایجاد
+•	updated_at — زمان آخرین تغییر
+________________________________________
+Fields
+Field	Type	Description
+title	CharField(100)	نام منو که در UI نمایش داده می‌شود.
+url	CharField(255, blank=True)	لینک مقصد منو. می‌تواند داخلی یا خارجی باشد.
+parent	ForeignKey(self, null=True, blank=True, related_name="children")	ارتباط بازگشتی برای ساخت Submenu. اگر مقدار null باشد منوی سطح بالا (Root Menu) محسوب می‌شود.
+is_visible	BooleanField(default=True)	تعیین می‌کند آیا منو در سایت نمایش داده شود یا مخفی باشد.
+order	PositiveIntegerField(default=0)	تعیین ترتیب نمایش منوها در یک سطح.
+سطح دسترسی
+•	Admin → کامل
+•	Doctor → می‌تواند مدیریت کند 
+•	Editor / Patient → اجازه ندارد
+________________________________________
+Appointments
+هدف
+سیستم رزرو (نوبت‌دهی آنلاین).
+وظایف
+•	تعریف اسلات‌های زمانی (Time Slots)
+•	ثبت نوبت توسط بیمار
+•	تایید یا رد نوبت توسط دکتر (در آینده)
+•	مدیریت وضعیت نوبت
+مدل‌های استاندارد
+1. Model: AvailableSlot
+Inheritance
+ارث‌بری از TimeStampedModel که شامل:
+•	created_at
+•	updated_at
+________________________________________
+Fields
+Field	Type	Description
+doctor	ForeignKey(User)	دکتر ایجادکننده این بازه زمانی.
+start_time	DateTimeField	زمان شروع بازه آزاد.
+end_time	DateTimeField	زمان پایان بازه آزاد.
+is_booked	BooleanField(default=False)	تعیین می‌کند که این بازه رزرو شده یا نه.
+
+2. Model: Appointment
+Purpose
+ثبت رزرو انجام‌شده توسط بیمار برای یک Slot مشخص.
+________________________________________
+Fields
+Field	Type	Description
+patient	ForeignKey(User)	بیمار رزروکننده نوبت.
+slot	OneToOneField(AvailableSlot)	ارتباط یک‌به‌یک با Slot، یعنی هر Slot فقط یک Appointment دارد.
+status	CharField(choices)	وضعیت نوبت: pending, confirmed, cancelled.
+________________________________________
+Status Choices
+Status	Meaning
+pending	درخواست ثبت شده، هنوز تایید نشده
+confirmed	نوبت تایید شده
+cancelled	نوبت لغو شده
+
+
+سطح دسترسی
+•	Admin → کامل
+•	Doctor → مدیریت اسلات‌ها + مشاهده نوبت‌ها
+•	Patient → رزرو و مشاهده نوبت‌های خودش
+•	Editor → دسترسی ندارد
+
+
+سطوح دسترسی :
+
+Admin/super user
+همه کار را از پنل ادمین میتواند انجام دهد
+
+Doctor
+از پنل ادمین میتواند site setting و doctor_profile را کنترل کند
+میتواند تمامی پست ها و کتگوری های ساخته شده توسط هرکسی را کنترل کند
+میتواند رزرو های انجام شده را فقط ببیند
+میتواند وقت های رزرو را تعیین کند
+
+Editor(blog)
+فقط میتواند در سایت پست و کتگوری بسازد و پست ها و کتگوری های ساخته شده توسط خودش را ویرایش کند
+
+Paisent
+اجازه ورود به پنل ادمین را ندارد
+دسترسی خاصی فعلا ندارد 
+عضو عادی هست
+
+نقش منشی (اضافه نشده هنوز)

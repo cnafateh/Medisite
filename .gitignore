@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# Django stuff
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+
+# Django media & static
+/media/
+staticfiles/
+static/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+*.env
+
+# Byte-compiled
+*.pyc
+*.pyo
+*.pyd
+
+# MyPy
+.mypy_cache/
+
+# pytest cache
+.pytest_cache/
+
+# coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Dist
+dist/
+build/
+
+# Django migrations compiled
+*/migrations/*.pyc
+
+# Ignore migrations (optional)
+# **/migrations/
+# !**/migrations/__init__.py
+
+*.env
+config/.env
