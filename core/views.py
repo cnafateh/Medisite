@@ -14,7 +14,7 @@ from .serializers import (
 # ---------------------------
 # Doctor Profile View
 # ---------------------------
-class DoctorProfileView(RetrieveAPIView):
+class DoctorProfileView(ListAPIView):
     queryset = DoctorProfile.objects.all()
     serializer_class = DoctorProfileSerializer
 
@@ -25,7 +25,7 @@ class DoctorProfileView(RetrieveAPIView):
 # ---------------------------
 # Site Settings View
 # ---------------------------
-class SiteSettingsView(RetrieveAPIView):
+class SiteSettingsView(ListAPIView):
     queryset = SiteSettings.objects.all()
     serializer_class = SiteSettingsSerializer
 

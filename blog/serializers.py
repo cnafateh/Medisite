@@ -9,9 +9,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    category_name = serializers.StringRelatedField(source='category', read_only=True)
+    created_by_name = serializers.StringRelatedField(source='created_by', read_only=True)
+
     class Meta:
         model = Post
         fields = [
             'id', 'title', 'slug', 'summary', 'content', 'thumbnail',
-            'category', 'created_by', 'is_active', 'created_at', 'updated_at'
+            'category', 'category_name',
+            'created_by', 'created_by_name',
+            'is_active', 'created_at', 'updated_at'
         ]

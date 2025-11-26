@@ -8,7 +8,10 @@ from .models import DoctorProfile, SiteSettings
 class DoctorProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorProfile
-        fields = "__all__"
+        fields = [
+            "full_name", "title", "biography", "medical_registry_number", "experience_years", 
+            "profile_image", "created_at", "updated_at"
+        ]
 
 
 # ---------------------------
