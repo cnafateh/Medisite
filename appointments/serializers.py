@@ -3,44 +3,45 @@ from .models import AvailableSlot, Appointment
 from django.utils import timezone
 
 
-class AvailableSlotSerializer(serializers.ModelSerializer):
+class SlotSerializer(serializers.ModelSerializer):
     class Meta:
         model = AvailableSlot
-        fields = "__all__"
-        read_only_fields = ["doctor", "is_booked"]
+        fields = ("id", "start_time", "end_time", "is_booked")
+
+
+class AppointmentCreateSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=100)
+    last_name = serializers.CharField(max_length=100)
+    phone = serializers.CharField(max_length=20, allow_blank=True, required=False)
+    age = serializers.IntegerField(min_value=0, required=False)
+    preferred_date = serializers.DateField(required=True)
+    preferred_time = serializers.TimeField(required=True)
+    description = serializers.CharField(allow_blank=True, required=False)
 
     def validate(self, data):
-        start = data["start_time"]
-        end = data["end_time"]
-
-        if start >= end:
-            raise serializers.ValidationError("زمان شروع باید قبل از پایان باشد.")
-
-        # چک همپوشانی تایم‌ها
-        doctor = self.context["request"].user
-        qs = AvailableSlot.objects.filter(doctor=doctor)
-
-        if self.instance:
-            qs = qs.exclude(pk=self.instance.pk)
-
-        overlap = qs.filter(
-            start_time__lt=end,
-            end_time__gt=start
-        ).exists()
-
-        if overlap:
-            raise serializers.ValidationError("این بازه زمانی با تایم دیگر همپوشانی دارد.")
-
+        # تبدیل preferred_date + preferred_time به یک datetime aware
+        dt = timezone.make_aware(
+            timezone.datetime.combine(data["preferred_date"], data["preferred_time"]),
+            timezone.get_current_timezone()
+        )
+        data["preferred_datetime"] = dt
+        # disallow past dates
+        if dt < timezone.now():
+            raise serializers.ValidationError("زمان انتخابی گذشته است.")
         return data
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    slot = SlotSerializer(read_only=True)
+
     class Meta:
         model = Appointment
-        fields = "__all__"
-        read_only_fields = ["patient", "status"]
-
-    def validate_slot(self, slot):
-        if slot.is_booked:
-            raise serializers.ValidationError("این تایم قبلاً رزرو شده است.")
-        return slot
+        fields = (
+            "id",
+            "first_name", "last_name", "phone", "age",
+            "preferred_datetime",
+            "slot",
+            "description",
+            "status",
+            "created_at",
+        )
