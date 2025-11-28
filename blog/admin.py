@@ -14,6 +14,14 @@ class CategoryAdmin(admin.ModelAdmin):
             obj.created_by = request.user
         super().save_model(request, obj, form, change)
 
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.groups.filter(name='Editor').exists():
+            return qs.filter(created_by=request.user)
+        return qs
+
+
 # Post
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -26,3 +34,10 @@ class PostAdmin(admin.ModelAdmin):
         if not change:
             obj.created_by = request.user
         super().save_model(request, obj, form, change)
+
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.groups.filter(name='Editor').exists():
+            return qs.filter(created_by=request.user)
+        return qs
