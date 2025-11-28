@@ -21,6 +21,16 @@ class PostListAPIView(generics.ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+    def get_queryset(self):
+        return Post.objects.filter(is_active=True).order_by('id')
+
+class PostReverseListAPIView(generics.ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        return Post.objects.filter(is_active=True).order_by('-id')
+
 class PostRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
