@@ -14,6 +14,9 @@ class AvailableSlot(models.Model):
             models.Index(fields=['start_time', 'end_time']),
             models.Index(fields=['is_booked', 'start_time']),
         ]
+
+
+    def __str__(self): return f"{str(self.start_time)[11:16]} - {str(self.end_time)[11:16]}"
 class Appointment(models.Model):
     STATUS_PENDING = "pending"
     STATUS_CONFIRMED = "confirmed"
