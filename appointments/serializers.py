@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import AvailableSlot, Appointment
 from django.utils import timezone
-
+from datetime import datetime
+from .models import AvailableSlot, Appointment
 
 class SlotSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,15 +19,13 @@ class AppointmentCreateSerializer(serializers.Serializer):
     description = serializers.CharField(allow_blank=True, required=False)
 
     def validate(self, data):
-        # تبدیل preferred_date + preferred_time به یک datetime aware
-        dt = timezone.make_aware(
-            timezone.datetime.combine(data["preferred_date"], data["preferred_time"]),
-            timezone.get_current_timezone()
-        )
-        data["preferred_datetime"] = dt
-        # disallow past dates
+        dt = datetime.combine(data["preferred_date"], data["preferred_time"])
+        dt = timezone.make_aware(dt, timezone.get_current_timezone())
+
         if dt < timezone.now():
             raise serializers.ValidationError("زمان انتخابی گذشته است.")
+
+        data["preferred_datetime"] = dt
         return data
 
 
@@ -37,11 +35,6 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = (
-            "id",
-            "first_name", "last_name", "phone", "age",
-            "preferred_datetime",
-            "slot",
-            "description",
-            "status",
-            "created_at",
+            "id", "first_name", "last_name", "phone", "age",
+            "preferred_datetime", "slot", "description", "status", "created_at"
         )
