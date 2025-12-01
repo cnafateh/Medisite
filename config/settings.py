@@ -57,7 +57,8 @@ INSTALLED_APPS = [
     "core",
     "blog",
     "accounts",
-    "appointments",
+    # "appointments",
+    "appointments.apps.AppointmentsConfig",
     "menu",
 ]
 
