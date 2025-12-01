@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils import timezone
+from django.utils.timezone import localtime
 
 class AvailableSlot(models.Model):
     start_time = models.DateTimeField(db_index=True)
@@ -16,7 +16,7 @@ class AvailableSlot(models.Model):
         ]
 
 
-    def __str__(self): return f"{str(self.start_time)[11:16]} - {str(self.end_time)[11:16]}"
+    def __str__(self): return f"{str(localtime(self.start_time))[0:11]} -> {str(localtime(self.start_time))[11:16]} - {str(localtime(self.end_time))[11:16]}"
 class Appointment(models.Model):
     STATUS_PENDING = "pending"
     STATUS_CONFIRMED = "confirmed"
