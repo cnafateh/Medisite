@@ -5,6 +5,7 @@ from .models import AvailableSlot, Appointment
 @admin.register(AvailableSlot)
 class AvailableSlotAdmin(admin.ModelAdmin):
     list_display = ("start_time", "end_time", "is_booked", "created_at")
+    list_editable = ("is_booked",)
     list_filter = ("is_booked",)
     search_fields = ("start_time", "end_time")
     ordering = ("start_time",)
