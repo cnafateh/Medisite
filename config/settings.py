@@ -14,9 +14,9 @@ SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = ["https://medisite.chbk.app/", 'medisite.chbk.app', '127.0.0.1:8000', '127.0.0.1']
+ALLOWED_HOSTS = ["https://medisite.chbk.dev/", 'medisite.chbk.dev', '127.0.0.1:8000', '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ["https://medisite.chbk.app/", "https://medisite.chbk.app"]
+CSRF_TRUSTED_ORIGINS = ["https://medisite.chbk.dev/", "https://medisite.chbk.dev"]
 
 
 #CORS_ALLOWED_ORIGINS = [
